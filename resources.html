@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <title>Ресурсы и помощь</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            min-height: 100vh;
+            background-color: #D3D3D3;
+            padding: 15px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .header {
+            background: #A7EF67;
+            border: 2px solid black;
+            border-radius: 20px;
+            padding: 18px 25px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .header h1 {
+            font-size: 1.4rem;
+        }
+        .header a {
+            color: #000;
+            text-decoration: none;
+            font-weight: bold;
+            border: 2px solid black;
+            border-radius: 10px;
+            padding: 6px 14px;
+            background: #90ccf7;
+        }
+        .section {
+            background: #A7EF67;
+            border: 2px solid black;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+        .section h2 {
+            margin-bottom: 18px;
+            font-size: 1.3rem;
+        }
+        .resource-item {
+            background: #90ccf7;
+            border: 2px solid black;
+            border-radius: 15px;
+            padding: 18px;
+            margin-bottom: 15px;
+        }
+        .resource-item h3 {
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+        .resource-item p {
+            line-height: 1.6;
+            color: #222;
+            margin-bottom: 10px;
+        }
+        .resource-item a {
+            color: #000;
+            font-weight: bold;
+            text-decoration: underline;
+        }
+        .resource-item .meta {
+            font-size: 0.85rem;
+            color: #444;
+            margin-top: 8px;
+        }
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 15px;
+        }
+        .contact-card {
+            background: #90ccf7;
+            border: 2px solid black;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+        }
+        .contact-card h3 {
+            margin-bottom: 10px;
+        }
+        .contact-card .phone {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .contact-card p {
+            font-size: 0.9rem;
+            color: #222;
+            line-height: 1.5;
+        }
+        .warning {
+            background: #f5a623;
+            border: 2px solid black;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        @media (max-width: 480px) {
+            .header h1 { font-size: 1.1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div id="app" class="container">
+        <div class="header">
+            <h1>Ресурсы и помощь</h1>
+            <a href="index.html">← На главную</a>
+        </div>
+
+        <div class="warning">
+            Если вы испытываете острую психологическую боль или есть риск суицида — немедленно обратитесь за помощью. Телефоны доверия работают круглосуточно.
+        </div>
+
+        <div class="section">
+            <h2>Экстренная помощь</h2>
+            <div class="contact-grid">
+                <div class="contact-card">
+                    <h3>Телефон доверия</h3>
+                    <div class="phone">8-800-2000-122</div>
+                    <p>Единый федеральный номер экстренной психологической помощи. Бесплатно, круглосуточно, анонимно.</p>
+                </div>
+                <div class="contact-card">
+                    <h3>Служба спасения</h3>
+                    <div class="phone">112</div>
+                    <p>Единый номер экстренных служб. При угрозе жизни и здоровью.</p>
+                </div>
+                <div class="contact-card">
+                    <h3>Центри «Серебряная нить»</h3>
+                    <div class="phone">8-800-700-54-01</div>
+                    <p>Профилактика суицида, психологическая поддержка.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Научная литература</h2>
+            <div class="resource-item">
+                <h3>Lovibond S.H., Lovibond P.F. (1995)</h3>
+                <p>Manual for the Depression Anxiety Stress Scales. Sydney: Psychology Foundation.</p>
+                <p class="meta">Оригинальное руководство по методике DASS. Содержит описание конструкта, процедуру стандартизации, нормы.</p>
+            </div>
+            <div class="resource-item">
+                <h3>Steel P. (2007)</h3>
+                <p>The nature of procrastination: a meta-analytic and theoretical review of quintessential self-regulatory failure. Psychological Bulletin, 133(1), 65–94.</p>
+                <p class="meta">Мета-анализ прокрастинации. Теоретическая модель и обзор исследований.</p>
+            </div>
+            <div class="resource-item">
+                <h3>Тарабрина Н.В. (2001)</h3>
+                <p>Практикум по психологии посттравматического стресса. СПб.: Питер.</p>
+                <p class="meta">Русскоязычная адаптация и валидизация DASS-21.</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Полезные ссылки</h2>
+            <div class="resource-item">
+                <h3><a href="https://www.apa.org" target="_blank">American Psychological Association</a></h3>
+                <p>Официальный сайт Американской психологической ассоциации. База данных исследований, методические рекомендации.</p>
+            </div>
+            <div class="resource-item">
+                <h3><a href="https://psycnet.apa.org" target="_blank">PsycNET</a></h3>
+                <p>Поисковая система по психологическим публикациям. Доступ к статьям и мета-анализам.</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="vue_global.js"></script>
+    <script>
+        Vue.createApp({}).mount('#app');
+    </script>
+</body>
+</html>

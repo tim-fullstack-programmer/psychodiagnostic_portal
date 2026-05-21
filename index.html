@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <title>Психодиагностический портал</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            min-height: 100vh;
+            background-color: #D3D3D3;
+            padding: 15px;
+        }
+        .header {
+            background: #A7EF67;
+            border: 2px solid black;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+        }
+        .header p {
+            color: #333;
+            font-size: 1rem;
+        }
+        .nav-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .nav-card {
+            background: #A7EF67;
+            border: 2px solid black;
+            border-radius: 20px;
+            padding: 25px;
+            cursor: pointer;
+            transition: transform 0.15s ease;
+            text-decoration: none;
+            color: black;
+            display: block;
+        }
+        .nav-card:hover {
+            transform: translateY(-3px);
+        }
+        .nav-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: #000;
+        }
+        .nav-card p {
+            font-size: 0.95rem;
+            color: #333;
+            line-height: 1.5;
+        }
+        .nav-card .tag {
+            display: inline-block;
+            background: #90ccf7;
+            border: 2px solid black;
+            border-radius: 10px;
+            padding: 4px 12px;
+            font-size: 0.8rem;
+            margin-top: 12px;
+            font-weight: bold;
+        }
+        @media (max-width: 480px) {
+            .header h1 { font-size: 1.4rem; }
+            .nav-card { padding: 18px; }
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="header">
+            <h1>Психодиагностический портал</h1>
+            <p>Инструменты самодиагностики и психологического тестирования</p>
+        </div>
+        <div class="nav-grid">
+            <a href="dass21.html" class="nav-card">
+                <h3>DASS-21</h3>
+                <p>Шкала депрессии, тревоги и стресса. Стандартизированная методика для оценки эмоционального состояния.</p>
+                <span class="tag">21 вопрос</span>
+            </a>
+            <a href="procrastination.html" class="nav-card">
+                <h3>Шкала иррациональной прокрастинации</h3>
+                <p>Оценка склонности к откладыванию важных дел и связанных с этим иррациональных убеждений.</p>
+                <span class="tag">20 вопросов</span>
+            </a>
+            <a href="about.html" class="nav-card">
+                <h3>О проекте</h3>
+                <p>Информация о методиках, психометрические характеристики, принципы работы портала.</p>
+                <span class="tag">Инфо</span>
+            </a>
+            <a href="resources.html" class="nav-card">
+                <h3>Ресурсы и помощь</h3>
+                <p>Научные статьи, литература, контакты экстренной психологической помощи.</p>
+                <span class="tag">Ссылки</span>
+            </a>
+        </div>
+    </div>
+    <script src="vue_global.js"></script>
+    <script>
+        Vue.createApp({}).mount('#app');
+    </script>
+</body>
+</html>

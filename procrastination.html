@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <title>Уровень прокрастинации</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            min-height: 100vh;
+            background-color: #D3D3D3;
+            padding: 15px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .header {
+            background: #A7EF67;
+            border: 2px solid black;
+            border-radius: 20px;
+            padding: 18px 25px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .header h1 {
+            font-size: 1.3rem;
+        }
+        .header a {
+            color: #000;
+            text-decoration: none;
+            font-weight: bold;
+            border: 2px solid black;
+            border-radius: 10px;
+            padding: 6px 14px;
+            background: #90ccf7;
+        }
+        .progress-bar {
+            background: #90ccf7;
+            border: 2px solid black;
+            border-radius: 10px;
+            height: 28px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+        .progress-fill {
+            background: #A7EF67;
+            height: 100%;
+            transition: width 0.3s;
+            border-right: 2px solid black;
+        }
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-weight: bold;
+            font-size: 0.85rem;
+        }
+        .question-block {
+            background: #A7EF67;
+            border: 2px solid black;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+        .question-block p {
+            font-weight: bold;
+            margin-bottom: 12px;
+            font-size: 1rem;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            background: rgba(255,255,255,0.4);
+            border: 2px solid black;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        .option:hover {
+            background: rgba(255,255,255,0.7);
+        }
+        .option input {
+            width: 18px;
+            height: 18px;
+            accent-color: #000;
+        }
+        .option label {
+            cursor: pointer;
+            flex: 1;
+            font-size: 0.95rem;
+        }
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: #90ccf7;
+            border: 2px solid black;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .btn:hover {
+            background: #76b5e0;
+        }
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .results {
+            background: #A7EF67;
+            border: 2px solid black;
+            border-radius: 20px;
+            padding: 25px;
+            margin-top: 20px;
+        }
+        .results h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .score-display {
+            background: #90ccf7;
+            border: 2px solid black;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .score-number {
+            font-size: 3rem;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .score-level {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .score-desc {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            text-align: left;
+            margin-top: 15px;
+        }
+        .subscales {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .subscale {
+            background: #90ccf7;
+            border: 2px solid black;
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+        }
+        .subscale h4 {
+            margin-bottom: 8px;
+        }
+        .subscale .val {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        @media (max-width: 480px) {
+            .header h1 { font-size: 1rem; }
+            .score-number { font-size: 2.2rem; }
+        }
+    </style>
+</head>
+<body>
+    <div id="app" class="container">
+        <div class="header">
+            <h1>Шкала иррациональной прокрастинации</h1>
+            <a href="index.html">← На главную</a>
+        </div>
+
+        <div class="progress-bar" v-if="!showResults">
+            <div class="progress-fill" :style="{width: progressPercent + '%'}"></div>
+            <div class="progress-text">{{ answeredCount }} / {{ questions.length }}</div>
+        </div>
+
+        <div v-if="!showResults">
+            <div class="question-block" v-for="(q, idx) in questions" :key="q.id">
+                <p>{{ idx + 1 }}. {{ q.text }}</p>
+                <div class="options">
+                    <div class="option" v-for="opt in options" :key="opt.value">
+                        <input type="radio" :name="'q'+q.id" :id="'q'+q.id+'_'+opt.value" 
+                               :value="opt.value" v-model="answers[q.id]">
+                        <label :for="'q'+q.id+'_'+opt.value">{{ opt.label }}</label>
+                    </div>
+                </div>
+            </div>
+            <button class="btn" @click="calculateResults" :disabled="!allAnswered">
+                Получить результаты
+            </button>
+        </div>
+
+        <div v-else class="results">
+            <h2>Результаты тестирования</h2>
+            <div class="score-display">
+                <div>Общий балл</div>
+                <div class="score-number">{{ totalScore }}</div>
+                <div class="score-level" :style="{color: levelColor}">{{ level }}</div>
+                <div class="score-desc">{{ levelDescription }}</div>
+            </div>
+            <div class="subscales">
+                <div class="subscale">
+                    <h4>Иррациональные ожидания</h4>
+                    <div class="val">{{ expectationsScore }}</div>
+                </div>
+                <div class="subscale">
+                    <h4>Низкая самооценка</h4>
+                    <div class="val">{{ selfEsteemScore }}</div>
+                </div>
+                <div class="subscale">
+                    <h4>Нетерпеливость</h4>
+                    <div class="val">{{ impatienceScore }}</div>
+                </div>
+            </div>
+            <button class="btn" @click="reset" style="margin-top: 20px;">Пройти заново</button>
+        </div>
+    </div>
+
+    <script src="vue_global.js"></script>
+    <script>
+        Vue.createApp({
+            data() {
+                return {
+                    answers: {},
+                    showResults: false,
+                    options: [
+                        { value: 1, label: '1 — Совершенно неверно' },
+                        { value: 2, label: '2 — В основном неверно' },
+                        { value: 3, label: '3 — Скорее неверно, чем верно' },
+                        { value: 4, label: '4 — Ни то, ни другое' },
+                        { value: 5, label: '5 — Скорее верно, чем неверно' },
+                        { value: 6, label: '6 — В основном верно' },
+                        { value: 7, label: '7 — Совершенно верно' }
+                    ],
+                    questions: [
+                        { id: 1, text: 'Я откладываю дела, потому что боюсь, что не справлюсь идеально', scale: 'e' },
+                        { id: 2, text: 'Я чувствую себя некомпетентным, когда думаю о невыполненных задачах', scale: 's' },
+                        { id: 3, text: 'Мне трудно начинать дела, требующие длительных усилий', scale: 'i' },
+                        { id: 4, text: 'Я откладываю дела, потому что боюсь критики других', scale: 'e' },
+                        { id: 5, text: 'Я чувствую себя неудачником, когда откладываю важные дела', scale: 's' },
+                        { id: 6, text: 'Я хочу получить результат немедленно, без усилий', scale: 'i' },
+                        { id: 7, text: 'Я откладываю дела, потому что считаю, что должен делать их без труда', scale: 'e' },
+                        { id: 8, text: 'Моя самооценка падает, когда я procrastинирую', scale: 's' },
+                        { id: 9, text: 'Мне трудно терпеть дискомфорт ради будущего результата', scale: 'i' },
+                        { id: 10, text: 'Я откладываю дела, потому что боюсь, что результат не оправдает ожиданий', scale: 'e' },
+                        { id: 11, text: 'Я чувствую себя недостаточно хорошим по сравнению с другими', scale: 's' },
+                        { id: 12, text: 'Я предпочитаю приятное занятие сейчас трудной задаче', scale: 'i' },
+                        { id: 13, text: 'Я откладываю дела, потому что считаю, что условия должны быть идеальными', scale: 'e' },
+                        { id: 14, text: 'Я критикую себя за прокрастинацию', scale: 's' },
+                        { id: 15, text: 'Мне трудно концентрироваться на долгосрочных целях', scale: 'i' },
+                        { id: 16, text: 'Я откладываю дела, потому что боюсь неизвестности', scale: 'e' },
+                        { id: 17, text: 'Я чувствую стыд, когда не успеваю в срок', scale: 's' },
+                        { id: 18, text: 'Я предпочитаю немедленное удовольствие отложенной награде', scale: 'i' },
+                        { id: 19, text: 'Я откладываю дела, потому что считаю, что должен делать всё сам', scale: 'e' },
+                        { id: 20, text: 'Я чувствую себя беспомощным перед лицом сложных задач', scale: 's' }
+                    ]
+                };
+            },
+            computed: {
+                answeredCount() {
+                    return Object.keys(this.answers).length;
+                },
+                progressPercent() {
+                    return (this.answeredCount / this.questions.length) * 100;
+                },
+                allAnswered() {
+                    return this.answeredCount === this.questions.length;
+                },
+                totalScore() {
+                    return this.questions.reduce((sum, q) => sum + (this.answers[q.id] || 0), 0);
+                },
+                expectationsScore() {
+                    return this.questions
+                        .filter(q => q.scale === 'e')
+                        .reduce((sum, q) => sum + (this.answers[q.id] || 0), 0);
+                },
+                selfEsteemScore() {
+                    return this.questions
+                        .filter(q => q.scale === 's')
+                        .reduce((sum, q) => sum + (this.answers[q.id] || 0), 0);
+                },
+                impatienceScore() {
+                    return this.questions
+                        .filter(q => q.scale === 'i')
+                        .reduce((sum, q) => sum + (this.answers[q.id] || 0), 0);
+                },
+                level() {
+                    const s = this.totalScore;
+                    if (s <= 40) return 'Низкий уровень прокрастинации';
+                    if (s <= 80) return 'Умеренный уровень прокрастинации';
+                    if (s <= 120) return 'Высокий уровень прокрастинации';
+                    return 'Очень высокий уровень прокрастинации';
+                },
+                levelColor() {
+                    const s = this.totalScore;
+                    if (s <= 40) return '#2d7d32';
+                    if (s <= 80) return '#f5a623';
+                    if (s <= 120) return '#e65100';
+                    return '#d0021b';
+                },
+                levelDescription() {
+                    const descs = {
+                        'Низкий уровень прокрастинации': 'Вы эффективно справляетесь с задачами. Прокрастинация не является проблемой. Рекомендуется поддерживать текущие стратегии тайм-менеджмента.',
+                        'Умеренный уровень прокрастинации': 'Прокрастинация присутствует, но контролируется. Рекомендуется работа с планированием, разбиение задач на части, техники помодоро.',
+                        'Высокий уровень прокрастинации': 'Прокрастинация значительно мешает жизни. Рекомендуется когнитивно-поведенческая терапия, работа с иррациональными убеждениями.',
+                        'Очень высокий уровень прокрастинации': 'Прокрастинация серьёзно нарушает функционирование. Настоятельно рекомендуется обращение к психотерапевту.'
+                    };
+                    return descs[this.level];
+                }
+            },
+            methods: {
+                calculateResults() {
+                    this.showResults = true;
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                },
+                reset() {
+                    this.answers = {};
+                    this.showResults = false;
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>

@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <title>Тест — DASS-21</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            min-height: 100vh;
+            background-color: #D3D3D3;
+            padding: 15px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .header {
+            background: #A7EF67;
+            border: 2px solid black;
+            border-radius: 20px;
+            padding: 18px 25px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .header h1 {
+            font-size: 1.4rem;
+        }
+        .header a {
+            color: #000;
+            text-decoration: none;
+            font-weight: bold;
+            border: 2px solid black;
+            border-radius: 10px;
+            padding: 6px 14px;
+            background: #90ccf7;
+        }
+        .main-layout {
+            display: flex;
+            gap: 20px;
+        }
+        .content {
+            flex: 1;
+        }
+        .sidebar {
+            width: 260px;
+            flex-shrink: 0;
+        }
+        .info-box {
+            background: #90ccf7;
+            border: 2px solid black;
+            border-radius: 20px;
+            padding: 18px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+        }
+        .info-box h4 {
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+        .info-box p {
+            margin-bottom: 8px;
+            line-height: 1.5;
+            color: #222;
+        }
+        .question-block {
+            background: #A7EF67;
+            border: 2px solid black;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+        .question-block p {
+            font-weight: bold;
+            margin-bottom: 12px;
+            font-size: 1rem;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            background: rgba(255,255,255,0.4);
+            border: 2px solid black;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.1s;
+        }
+        .option:hover {
+            background: rgba(255,255,255,0.7);
+        }
+        .option input {
+            width: 18px;
+            height: 18px;
+            accent-color: #000;
+        }
+        .option label {
+            cursor: pointer;
+            flex: 1;
+            font-size: 0.95rem;
+        }
+        .progress-bar {
+            background: #90ccf7;
+            border: 2px solid black;
+            border-radius: 10px;
+            height: 28px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+        .progress-fill {
+            background: #A7EF67;
+            height: 100%;
+            transition: width 0.3s;
+            border-right: 2px solid black;
+        }
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-weight: bold;
+            font-size: 0.85rem;
+        }
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: #90ccf7;
+            border: 2px solid black;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .btn:hover {
+            background: #76b5e0;
+        }
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .results {
+            background: #A7EF67;
+            border: 2px solid black;
+            border-radius: 20px;
+            padding: 25px;
+            margin-top: 20px;
+        }
+        .results h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .scale-result {
+            background: #90ccf7;
+            border: 2px solid black;
+            border-radius: 15px;
+            padding: 18px;
+            margin-bottom: 15px;
+        }
+        .scale-result h3 {
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .score-badge {
+            background: #A7EF67;
+            border: 2px solid black;
+            border-radius: 10px;
+            padding: 4px 14px;
+            font-size: 1.1rem;
+        }
+        .level-bar {
+            height: 24px;
+            background: #ddd;
+            border: 2px solid black;
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 10px 0;
+            position: relative;
+        }
+        .level-fill {
+            height: 100%;
+            transition: width 0.5s;
+        }
+        .level-fill.green { background: #7ed321; }
+        .level-fill.yellow { background: #f5a623; }
+        .level-fill.red { background: #d0021b; }
+        .level-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-weight: bold;
+            font-size: 0.8rem;
+            white-space: nowrap;
+        }
+        .interpretation {
+            font-size: 0.9rem;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+        .chart-container {
+            background: #90ccf7;
+            border: 2px solid black;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 15px;
+        }
+        .chart {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            height: 180px;
+            gap: 15px;
+            padding: 10px 0;
+        }
+        .chart-bar-wrap {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+        .chart-bar {
+            width: 100%;
+            max-width: 80px;
+            border: 2px solid black;
+            border-radius: 8px 8px 0 0;
+            transition: height 0.5s;
+            min-height: 4px;
+        }
+        .chart-bar.green { background: #7ed321; }
+        .chart-bar.yellow { background: #f5a623; }
+        .chart-bar.red { background: #d0021b; }
+        .chart-label {
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-align: center;
+        }
+        @media (max-width: 768px) {
+            .main-layout { flex-direction: column; }
+            .sidebar { width: 100%; }
+            .header h1 { font-size: 1.1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div id="app" class="container">
+        <div class="header">
+            <h1>DASS-21</h1>
+            <a href="index.html">← На главную</a>
+        </div>
+
+        <div class="main-layout">
+            <div class="content">
+                <div class="progress-bar" v-if="!showResults">
+                    <div class="progress-fill" :style="{width: progressPercent + '%'}"></div>
+                    <div class="progress-text">{{ answeredCount }} / {{ questions.length }}</div>
+                </div>
+
+                <div v-if="!showResults">
+                    <div class="question-block" v-for="(q, idx) in questions" :key="q.id">
+                        <p>{{ idx + 1 }}. {{ q.text }}</p>
+                        <div class="options">
+                            <div class="option" v-for="opt in options" :key="opt.value">
+                                <input type="radio" :name="'q'+q.id" :id="'q'+q.id+'_'+opt.value" 
+                                       :value="opt.value" v-model="answers[q.id]">
+                                <label :for="'q'+q.id+'_'+opt.value">{{ opt.label }}</label>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn" @click="calculateResults" :disabled="!allAnswered">
+                        Получить результаты
+                    </button>
+                </div>
+
+                <div v-else class="results">
+                    <h2>Результаты тестирования</h2>
+                    
+                    <div class="scale-result">
+                        <h3>Депрессия <span class="score-badge">{{ depressionScore }}</span></h3>
+                        <div class="level-bar">
+                            <div class="level-fill" :class="depressionColor" :style="{width: Math.min(depressionScore/42*100, 100) + '%'}"></div>
+                            <div class="level-text">{{ depressionLevel }}</div>
+                        </div>
+                        <p class="interpretation">{{ depressionDesc }}</p>
+                    </div>
+
+                    <div class="scale-result">
+                        <h3>Тревога <span class="score-badge">{{ anxietyScore }}</span></h3>
+                        <div class="level-bar">
+                            <div class="level-fill" :class="anxietyColor" :style="{width: Math.min(anxietyScore/42*100, 100) + '%'}"></div>
+                            <div class="level-text">{{ anxietyLevel }}</div>
+                        </div>
+                        <p class="interpretation">{{ anxietyDesc }}</p>
+                    </div>
+
+                    <div class="scale-result">
+                        <h3>Стресс <span class="score-badge">{{ stressScore }}</span></h3>
+                        <div class="level-bar">
+                            <div class="level-fill" :class="stressColor" :style="{width: Math.min(stressScore/42*100, 100) + '%'}"></div>
+                            <div class="level-text">{{ stressLevel }}</div>
+                        </div>
+                        <p class="interpretation">{{ stressDesc }}</p>
+                    </div>
+
+                    <div class="chart-container">
+                        <div class="chart">
+                            <div class="chart-bar-wrap">
+                                <div class="chart-bar" :class="depressionColor" :style="{height: Math.max(depressionScore/42*160, 4) + 'px'}"></div>
+                                <div class="chart-label">Депрессия</div>
+                            </div>
+                            <div class="chart-bar-wrap">
+                                <div class="chart-bar" :class="anxietyColor" :style="{height: Math.max(anxietyScore/42*160, 4) + 'px'}"></div>
+                                <div class="chart-label">Тревога</div>
+                            </div>
+                            <div class="chart-bar-wrap">
+                                <div class="chart-bar" :class="stressColor" :style="{height: Math.max(stressScore/42*160, 4) + 'px'}"></div>
+                                <div class="chart-label">Стресс</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="btn" @click="reset" style="margin-top: 20px;">Пройти заново</button>
+                </div>
+            </div>
+
+            <div class="sidebar" v-if="!showResults">
+                <div class="info-box">
+                    <h4>О методике</h4>
+                    <p><strong>Авторы:</strong> Lovibond S.H., Lovibond P.F. (1995)</p>
+                    <p><strong>Адаптация:</strong> Тарабрина Н.В. и др.</p>
+                    <p><strong>Назначение:</strong> Оценка негативных эмоциональных состояний за последнюю неделю.</p>
+                    <p><strong>Шкалы:</strong> депрессия (D), тревога (A), стресс (S).</p>
+                    <p><strong>Нормировка:</strong> сумма баллов × 2 (приведение к полной шкале DASS-42).</p>
+                </div>
+                <div class="info-box">
+                    <h4>Интерпретация</h4>
+                    <p><strong>Депрессия:</strong> 0-9 норма, 10-13 лёгкая, 14-20 умеренная, 21-27 тяжёлая, 28+ чрезвычайно тяжёлая</p>
+                    <p><strong>Тревога:</strong> 0-7 норма, 8-9 лёгкая, 10-14 умеренная, 15-19 тяжёлая, 20+ чрезвычайно тяжёлая</p>
+                    <p><strong>Стресс:</strong> 0-14 норма, 15-18 лёгкий, 19-25 умеренный, 26-33 тяжёлый, 34+ чрезвычайно тяжёлый</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="vue_global.js"></script>
+    <script>
+        Vue.createApp({
+            data() {
+                return {
+                    answers: {},
+                    showResults: false,
+                    options: [
+                        { value: 0, label: '0 — Не соответствует мне совсем' },
+                        { value: 1, label: '1 — Соответствует мне в какой-то степени' },
+                        { value: 2, label: '2 — Соответствует мне в значительной степени' },
+                        { value: 3, label: '3 — Соответствует мне полностью' }
+                    ],
+                    questions: [
+                        { id: 1, text: 'Мне было трудно успокоиться', scale: 's' },
+                        { id: 2, text: 'Я чувствовал, что рот мне пересыхает', scale: 'a' },
+                        { id: 3, text: 'Мне не удавалось испытывать позитивные чувства', scale: 'd' },
+                        { id: 4, text: 'Я испытывал затруднения при дыхании', scale: 'a' },
+                        { id: 5, text: 'Мне было трудно найти энтузиазм для чего-либо', scale: 'd' },
+                        { id: 6, text: 'Я склонен был реагировать излишне эмоционально', scale: 's' },
+                        { id: 7, text: 'Я чувствовал себя измождённым', scale: 's' },
+                        { id: 8, text: 'Я чувствовал, что нахожусь на грани нервного срыва', scale: 'a' },
+                        { id: 9, text: 'Я чувствовал себя напряжённым', scale: 's' },
+                        { id: 10, text: 'Я чувствовал, что не осталось ничего хорошего', scale: 'd' },
+                        { id: 11, text: 'Я чувствовал себя беспокойным', scale: 'a' },
+                        { id: 12, text: 'Мне было трудно расслабиться', scale: 's' },
+                        { id: 13, text: 'Я чувствовал себя подавленным и унылым', scale: 'd' },
+                        { id: 14, text: 'Я был нетерпелив к любым препятствиям', scale: 's' },
+                        { id: 15, text: 'Я испытывал чувство надвигающейся паники', scale: 'a' },
+                        { id: 16, text: 'Я не мог найти в себе силы на что-либо', scale: 'd' },
+                        { id: 17, text: 'Я чувствовал себя ничем не интересующимся', scale: 'd' },
+                        { id: 18, text: 'Я чувствовал, что не стою как человек', scale: 'd' },
+                        { id: 19, text: 'Я замечал, что сердце бьётся учащённо', scale: 'a' },
+                        { id: 20, text: 'Я чувствовал себя напуганным без видимой причины', scale: 'a' },
+                        { id: 21, text: 'Мне казалось, что жизнь бессмысленна', scale: 'd' }
+                    ]
+                };
+            },
+            computed: {
+                answeredCount() {
+                    return Object.keys(this.answers).length;
+                },
+                progressPercent() {
+                    return (this.answeredCount / this.questions.length) * 100;
+                },
+                allAnswered() {
+                    return this.answeredCount === this.questions.length;
+                },
+                depressionRaw() {
+                    return this.questions
+                        .filter(q => q.scale === 'd')
+                        .reduce((sum, q) => sum + (this.answers[q.id] || 0), 0);
+                },
+                anxietyRaw() {
+                    return this.questions
+                        .filter(q => q.scale === 'a')
+                        .reduce((sum, q) => sum + (this.answers[q.id] || 0), 0);
+                },
+                stressRaw() {
+                    return this.questions
+                        .filter(q => q.scale === 's')
+                        .reduce((sum, q) => sum + (this.answers[q.id] || 0), 0);
+                },
+                depressionScore() { return this.depressionRaw * 2; },
+                anxietyScore() { return this.anxietyRaw * 2; },
+                stressScore() { return this.stressRaw * 2; },
+                depressionLevel() {
+                    const s = this.depressionScore;
+                    if (s <= 9) return 'Норма';
+                    if (s <= 13) return 'Лёгкая';
+                    if (s <= 20) return 'Умеренная';
+                    if (s <= 27) return 'Тяжёлая';
+                    return 'Чрезвычайно тяжёлая';
+                },
+                anxietyLevel() {
+                    const s = this.anxietyScore;
+                    if (s <= 7) return 'Норма';
+                    if (s <= 9) return 'Лёгкая';
+                    if (s <= 14) return 'Умеренная';
+                    if (s <= 19) return 'Тяжёлая';
+                    return 'Чрезвычайно тяжёлая';
+                },
+                stressLevel() {
+                    const s = this.stressScore;
+                    if (s <= 14) return 'Норма';
+                    if (s <= 18) return 'Лёгкий';
+                    if (s <= 25) return 'Умеренный';
+                    if (s <= 33) return 'Тяжёлый';
+                    return 'Чрезвычайно тяжёлый';
+                },
+                depressionColor() {
+                    const s = this.depressionScore;
+                    if (s <= 13) return 'green';
+                    if (s <= 20) return 'yellow';
+                    return 'red';
+                },
+                anxietyColor() {
+                    const s = this.anxietyScore;
+                    if (s <= 9) return 'green';
+                    if (s <= 14) return 'yellow';
+                    return 'red';
+                },
+                stressColor() {
+                    const s = this.stressScore;
+                    if (s <= 18) return 'green';
+                    if (s <= 25) return 'yellow';
+                    return 'red';
+                },
+                depressionDesc() {
+                    const lvls = {
+                        'Норма': 'Состояние в пределах нормы. Негативные эмоции минимальны.',
+                        'Лёгкая': 'Незначительные проявления депрессивных переживаний. Рекомендуется наблюдение.',
+                        'Умеренная': 'Выраженные депрессивные симптомы. Рекомендуется консультация специалиста.',
+                        'Тяжёлая': 'Серьёзные депрессивные проявления. Необходима профессиональная помощь.',
+                        'Чрезвычайно тяжёлая': 'Крайне выраженная депрессия. Срочно обратитесь к психотерапевту или психиатру.'
+                    };
+                    return lvls[this.depressionLevel];
+                },
+                anxietyDesc() {
+                    const lvls = {
+                        'Норма': 'Тревожность в пределах нормы.',
+                        'Лёгкая': 'Незначительная тревожность. Полезны техники релаксации.',
+                        'Умеренная': 'Выраженная тревога. Рекомендуется консультация специалиста.',
+                        'Тяжёлая': 'Серьёзная тревожность. Необходима профессиональная помощь.',
+                        'Чрезвычайно тяжёлая': 'Крайне выраженная тревога. Срочно обратитесь к специалисту.'
+                    };
+                    return lvls[this.anxietyLevel];
+                },
+                stressDesc() {
+                    const lvls = {
+                        'Норма': 'Уровень стресса в пределах нормы.',
+                        'Лёгкий': 'Незначительный стресс. Рекомендуется отдых и физическая активность.',
+                        'Умеренный': 'Выраженный стресс. Важен пересмотр образа жизни и нагрузок.',
+                        'Тяжёлый': 'Серьёзный стресс. Рекомендуется консультация специалиста.',
+                        'Чрезвычайно тяжёлый': 'Критический уровень стресса. Срочно обратитесь за помощью.'
+                    };
+                    return lvls[this.stressLevel];
+                }
+            },
+            methods: {
+                calculateResults() {
+                    this.showResults = true;
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                },
+                reset() {
+                    this.answers = {};
+                    this.showResults = false;
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>

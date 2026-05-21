@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <title>О проекте</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            min-height: 100vh;
+            background-color: #D3D3D3;
+            padding: 15px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .header {
+            background: #A7EF67;
+            border: 2px solid black;
+            border-radius: 20px;
+            padding: 18px 25px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .header h1 {
+            font-size: 1.4rem;
+        }
+        .header a {
+            color: #000;
+            text-decoration: none;
+            font-weight: bold;
+            border: 2px solid black;
+            border-radius: 10px;
+            padding: 6px 14px;
+            background: #90ccf7;
+        }
+        .section {
+            background: #A7EF67;
+            border: 2px solid black;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+        .section h2 {
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+        .section p {
+            line-height: 1.7;
+            margin-bottom: 12px;
+            color: #222;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            background: #90ccf7;
+            border: 2px solid black;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        th {
+            background: #76b5e0;
+            padding: 12px;
+            text-align: left;
+            border-bottom: 2px solid black;
+            font-weight: bold;
+        }
+        td {
+            padding: 12px;
+            border-bottom: 1px solid rgba(0,0,0,0.15);
+        }
+        tr:last-child td {
+            border-bottom: none;
+        }
+        tr:nth-child(even) {
+            background: rgba(255,255,255,0.2);
+        }
+        .principle {
+            background: #90ccf7;
+            border: 2px solid black;
+            border-radius: 15px;
+            padding: 18px;
+            margin-bottom: 15px;
+        }
+        .principle h3 {
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+        .principle p {
+            line-height: 1.6;
+            color: #222;
+        }
+        @media (max-width: 480px) {
+            .header h1 { font-size: 1.1rem; }
+            th, td { padding: 8px; font-size: 0.85rem; }
+        }
+    </style>
+</head>
+<body>
+    <div id="app" class="container">
+        <div class="header">
+            <h1>О проекте</h1>
+            <a href="index.html">← На главную</a>
+        </div>
+
+        <div class="section">
+            <h2>О портале</h2>
+            <p>Психодиагностический портал предоставляет доступ к валидизированным методикам психологического тестирования. Все тесты размещены в открытом доступе для целей самодиагностики и образовательных целей.</p>
+            <p>Результаты тестирования носят информационный характер и не являются медицинским диагнозом. При выявлении выраженных симптомов рекомендуется обращение к квалифицированному специалисту.</p>
+        </div>
+
+        <div class="section">
+            <h2>Психометрические характеристики методик</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Методика</th>
+                        <th>Авторы</th>
+                        <th>Надёжность (Cronbach α)</th>
+                        <th>Валидность</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>DASS-21</td>
+                        <td>Lovibond S.H., Lovibond P.F. (1995)</td>
+                        <td>α = 0.82–0.93</td>
+                        <td>Конвергентная, дискриминантная, критериальная</td>
+                    </tr>
+                    <tr>
+                        <td>Шкала иррациональной прокрастинации</td>
+                        <td>Steel P. (2010), адаптация</td>
+                        <td>α = 0.78–0.85</td>
+                        <td>Конструктная, критериальная</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2>Принципы работы</h2>
+            <div class="principle">
+                <h3>Конфиденциальность</h3>
+                <p>Все данные обрабатываются локально в браузере. Сервер не получает и не хранит ответы пользователей. Результаты доступны только вам.</p>
+            </div>
+            <div class="principle">
+                <h3>Научная обоснованность</h3>
+                <p>Используются только методики с подтверждёнными психометрическими характеристиками, адаптированные и валидизированные на русскоязычных выборках.</p>
+            </div>
+            <div class="principle">
+                <h3>Информированное согласие</h3>
+                <p>Пользователь осознаёт, что результаты самотестирования не заменяют профессиональную консультацию. Портал не несёт ответственности за самостоятельную интерпретацию результатов.</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="vue_global.js"></script>
+    <script>
+        Vue.createApp({}).mount('#app');
+    </script>
+</body>
+</html>
