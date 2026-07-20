@@ -103,6 +103,9 @@
         .option:hover {
             background: rgba(255,255,255,0.7);
         }
+        .option.selected {
+            background: #90ccf7;
+        }
         .option input {
             width: 18px;
             height: 18px;
@@ -253,6 +256,7 @@
             font-weight: bold;
             text-align: center;
         }
+        .hidden { display: none !important; }
         @media (max-width: 768px) {
             .main-layout { flex-direction: column; }
             .sidebar { width: 100%; }
@@ -261,7 +265,7 @@
     </style>
 </head>
 <body>
-    <div id="app" class="container">
+    <div class="container">
         <div class="header">
             <h1>DASS-21</h1>
             <a href="index.html">← Home</a>
@@ -269,86 +273,77 @@
 
         <div class="main-layout">
             <div class="content">
-                <div class="progress-bar" v-if="!showResults">
-                    <div class="progress-fill" :style="{width: progressPercent + '%'}"></div>
-                    <div class="progress-text">{{ answeredCount }} / {{ questions.length }}</div>
+                <div class="progress-bar" id="progress-bar">
+                    <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+                    <div class="progress-text" id="progress-text">0 / 21</div>
                 </div>
 
-                <div v-if="!showResults">
-                    <div class="question-block" v-for="(q, idx) in questions" :key="q.id">
-                        <p>{{ idx + 1 }}. {{ q.text }}</p>
-                        <div class="options">
-                            <div class="option" v-for="opt in options" :key="opt.value">
-                                <input type="radio" :name="'q'+q.id" :id="'q'+q.id+'_'+opt.value" 
-                                       :value="opt.value" v-model="answers[q.id]">
-                                <label :for="'q'+q.id+'_'+opt.value">{{ opt.label }}</label>
-                            </div>
-                        </div>
-                    </div>
-                    <button class="btn" @click="calculateResults" :disabled="!allAnswered">
-                        Get Results
-                    </button>
+                <div id="quiz-section">
+                    <div id="questions-area"></div>
+                    <button class="btn" id="submit-btn" disabled onclick="calculateResults()">Get Results</button>
                 </div>
 
-                <div v-else class="results">
-                    <h2>Test Results</h2>
+                <div id="results-section" class="hidden">
+                    <div class="results">
+                        <h2>Test Results</h2>
 
-                    <div class="scale-result">
-                        <h3>Depression <span class="score-badge">{{ depressionScore }}</span></h3>
-                        <div class="level-bar">
-                            <div class="level-fill" :class="depressionColor" :style="{width: Math.min(depressionScore/42*100, 100) + '%'}"></div>
-                            <div class="level-text">{{ depressionLevel }}</div>
-                        </div>
-                        <p class="interpretation">{{ depressionDesc }}</p>
-                    </div>
-
-                    <div class="scale-result">
-                        <h3>Anxiety <span class="score-badge">{{ anxietyScore }}</span></h3>
-                        <div class="level-bar">
-                            <div class="level-fill" :class="anxietyColor" :style="{width: Math.min(anxietyScore/42*100, 100) + '%'}"></div>
-                            <div class="level-text">{{ anxietyLevel }}</div>
-                        </div>
-                        <p class="interpretation">{{ anxietyDesc }}</p>
-                    </div>
-
-                    <div class="scale-result">
-                        <h3>Stress <span class="score-badge">{{ stressScore }}</span></h3>
-                        <div class="level-bar">
-                            <div class="level-fill" :class="stressColor" :style="{width: Math.min(stressScore/42*100, 100) + '%'}"></div>
-                            <div class="level-text">{{ stressLevel }}</div>
-                        </div>
-                        <p class="interpretation">{{ stressDesc }}</p>
-                    </div>
-
-                    <div class="chart-container">
-                        <div class="chart">
-                            <div class="chart-bar-wrap">
-                                <div class="chart-bar" :class="depressionColor" :style="{height: Math.max(depressionScore/42*160, 4) + 'px'}"></div>
-                                <div class="chart-label">Depression</div>
+                        <div class="scale-result">
+                            <h3>Depression <span class="score-badge" id="d-score">0</span></h3>
+                            <div class="level-bar">
+                                <div class="level-fill" id="d-bar" style="width:0%"></div>
+                                <div class="level-text" id="d-level">Normal</div>
                             </div>
-                            <div class="chart-bar-wrap">
-                                <div class="chart-bar" :class="anxietyColor" :style="{height: Math.max(anxietyScore/42*160, 4) + 'px'}"></div>
-                                <div class="chart-label">Anxiety</div>
+                            <p class="interpretation" id="d-desc"></p>
+                        </div>
+
+                        <div class="scale-result">
+                            <h3>Anxiety <span class="score-badge" id="a-score">0</span></h3>
+                            <div class="level-bar">
+                                <div class="level-fill" id="a-bar" style="width:0%"></div>
+                                <div class="level-text" id="a-level">Normal</div>
                             </div>
-                            <div class="chart-bar-wrap">
-                                <div class="chart-bar" :class="stressColor" :style="{height: Math.max(stressScore/42*160, 4) + 'px'}"></div>
-                                <div class="chart-label">Stress</div>
+                            <p class="interpretation" id="a-desc"></p>
+                        </div>
+
+                        <div class="scale-result">
+                            <h3>Stress <span class="score-badge" id="s-score">0</span></h3>
+                            <div class="level-bar">
+                                <div class="level-fill" id="s-bar" style="width:0%"></div>
+                                <div class="level-text" id="s-level">Normal</div>
+                            </div>
+                            <p class="interpretation" id="s-desc"></p>
+                        </div>
+
+                        <div class="chart-container">
+                            <div class="chart">
+                                <div class="chart-bar-wrap">
+                                    <div class="chart-bar" id="d-chart" style="height:4px"></div>
+                                    <div class="chart-label">Depression</div>
+                                </div>
+                                <div class="chart-bar-wrap">
+                                    <div class="chart-bar" id="a-chart" style="height:4px"></div>
+                                    <div class="chart-label">Anxiety</div>
+                                </div>
+                                <div class="chart-bar-wrap">
+                                    <div class="chart-bar" id="s-chart" style="height:4px"></div>
+                                    <div class="chart-label">Stress</div>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <button class="btn" @click="reset" style="margin-top: 20px;">Retake Test</button>
+                        <button class="btn" onclick="resetQuiz()" style="margin-top: 20px;">Retake Test</button>
+                    </div>
                 </div>
             </div>
 
-            <div class="sidebar" v-if="!showResults">
+            <div class="sidebar" id="sidebar">
                 <div class="info-box">
                     <h4>About the Scale</h4>
                     <p><strong>Authors:</strong> Lovibond S.H., Lovibond P.F. (1995)</p>
-                    <p><strong>Adaptation:</strong> Henry & Crawford (2005) and others</p>
+                    <p><strong>Adaptation:</strong> Henry & Crawford (2005)</p>
                     <p><strong>Purpose:</strong> Assessment of negative emotional states over the past week.</p>
                     <p><strong>Scales:</strong> Depression (D), Anxiety (A), Stress (S).</p>
-                    <p><strong>Scoring:</strong> sum of scores × 2 (conversion to full DASS-42 scale).</p>
+                    <p><strong>Scoring:</strong> sum of scores × 2 (conversion to full DASS-42).</p>
                 </div>
                 <div class="info-box">
                     <h4>Interpretation</h4>
@@ -360,157 +355,194 @@
         </div>
     </div>
 
-    <script src="vue_global.js"></script>
     <script>
-        Vue.createApp({
-            data() {
-                return {
-                    answers: {},
-                    showResults: false,
-                    options: [
-                        { value: 0, label: '0 — Did not apply to me at all' },
-                        { value: 1, label: '1 — Applied to me to some degree' },
-                        { value: 2, label: '2 — Applied to me to a considerable degree' },
-                        { value: 3, label: '3 — Applied to me very much' }
-                    ],
-                    questions: [
-                        { id: 1, text: 'I found it hard to wind down', scale: 's' },
-                        { id: 2, text: 'I was aware of dryness of my mouth', scale: 'a' },
-                        { id: 3, text: 'I couldn't seem to experience any positive feeling at all', scale: 'd' },
-                        { id: 4, text: 'I experienced breathing difficulty', scale: 'a' },
-                        { id: 5, text: 'I found it difficult to work up the initiative to do things', scale: 'd' },
-                        { id: 6, text: 'I tended to over-react to situations', scale: 's' },
-                        { id: 7, text: 'I experienced trembling (e.g., in the hands)', scale: 's' },
-                        { id: 8, text: 'I felt that I was using a lot of nervous energy', scale: 'a' },
-                        { id: 9, text: 'I was worried about situations in which I might panic and make a fool of myself', scale: 's' },
-                        { id: 10, text: 'I felt that I had nothing to look forward to', scale: 'd' },
-                        { id: 11, text: 'I found myself getting agitated', scale: 'a' },
-                        { id: 12, text: 'I found it difficult to relax', scale: 's' },
-                        { id: 13, text: 'I felt down-hearted and blue', scale: 'd' },
-                        { id: 14, text: 'I was intolerant of anything that kept me from getting on with what I was doing', scale: 's' },
-                        { id: 15, text: 'I felt I was close to panic', scale: 'a' },
-                        { id: 16, text: 'I was unable to become enthusiastic about anything', scale: 'd' },
-                        { id: 17, text: 'I felt I wasn't worth much as a person', scale: 'd' },
-                        { id: 18, text: 'I felt that I was rather touchy', scale: 'd' },
-                        { id: 19, text: 'I was aware of the action of my heart in the absence of physical exertion', scale: 'a' },
-                        { id: 20, text: 'I felt scared without any good reason', scale: 'a' },
-                        { id: 21, text: 'I felt that life was meaningless', scale: 'd' }
-                    ]
-                };
-            },
-            computed: {
-                answeredCount() {
-                    return Object.keys(this.answers).length;
-                },
-                progressPercent() {
-                    return (this.answeredCount / this.questions.length) * 100;
-                },
-                allAnswered() {
-                    return this.answeredCount === this.questions.length;
-                },
-                depressionRaw() {
-                    return this.questions
-                        .filter(q => q.scale === 'd')
-                        .reduce((sum, q) => sum + (this.answers[q.id] || 0), 0);
-                },
-                anxietyRaw() {
-                    return this.questions
-                        .filter(q => q.scale === 'a')
-                        .reduce((sum, q) => sum + (this.answers[q.id] || 0), 0);
-                },
-                stressRaw() {
-                    return this.questions
-                        .filter(q => q.scale === 's')
-                        .reduce((sum, q) => sum + (this.answers[q.id] || 0), 0);
-                },
-                depressionScore() { return this.depressionRaw * 2; },
-                anxietyScore() { return this.anxietyRaw * 2; },
-                stressScore() { return this.stressRaw * 2; },
-                depressionLevel() {
-                    const s = this.depressionScore;
-                    if (s <= 9) return 'Normal';
-                    if (s <= 13) return 'Mild';
-                    if (s <= 20) return 'Moderate';
-                    if (s <= 27) return 'Severe';
-                    return 'Extremely Severe';
-                },
-                anxietyLevel() {
-                    const s = this.anxietyScore;
-                    if (s <= 7) return 'Normal';
-                    if (s <= 9) return 'Mild';
-                    if (s <= 14) return 'Moderate';
-                    if (s <= 19) return 'Severe';
-                    return 'Extremely Severe';
-                },
-                stressLevel() {
-                    const s = this.stressScore;
-                    if (s <= 14) return 'Normal';
-                    if (s <= 18) return 'Mild';
-                    if (s <= 25) return 'Moderate';
-                    if (s <= 33) return 'Severe';
-                    return 'Extremely Severe';
-                },
-                depressionColor() {
-                    const s = this.depressionScore;
-                    if (s <= 13) return 'green';
-                    if (s <= 20) return 'yellow';
-                    return 'red';
-                },
-                anxietyColor() {
-                    const s = this.anxietyScore;
-                    if (s <= 9) return 'green';
-                    if (s <= 14) return 'yellow';
-                    return 'red';
-                },
-                stressColor() {
-                    const s = this.stressScore;
-                    if (s <= 18) return 'green';
-                    if (s <= 25) return 'yellow';
-                    return 'red';
-                },
-                depressionDesc() {
-                    const lvls = {
-                        'Normal': 'Your emotional state is within normal limits. Negative emotions are minimal.',
-                        'Mild': 'Minor signs of depressive experiences. Monitoring is recommended.',
-                        'Moderate': 'Noticeable depressive symptoms. Consultation with a specialist is recommended.',
-                        'Severe': 'Serious depressive manifestations. Professional help is necessary.',
-                        'Extremely Severe': 'Extremely severe depression. Seek a psychotherapist or psychiatrist urgently.'
-                    };
-                    return lvls[this.depressionLevel];
-                },
-                anxietyDesc() {
-                    const lvls = {
-                        'Normal': 'Anxiety is within normal limits.',
-                        'Mild': 'Minor anxiety. Relaxation techniques may be helpful.',
-                        'Moderate': 'Noticeable anxiety. Consultation with a specialist is recommended.',
-                        'Severe': 'Serious anxiety. Professional help is necessary.',
-                        'Extremely Severe': 'Extremely severe anxiety. Seek a specialist urgently.'
-                    };
-                    return lvls[this.anxietyLevel];
-                },
-                stressDesc() {
-                    const lvls = {
-                        'Normal': 'Stress level is within normal limits.',
-                        'Mild': 'Minor stress. Rest and physical activity are recommended.',
-                        'Moderate': 'Noticeable stress. Review of lifestyle and workload is important.',
-                        'Severe': 'Serious stress. Consultation with a specialist is recommended.',
-                        'Extremely Severe': 'Critical stress level. Seek help urgently.'
-                    };
-                    return lvls[this.stressLevel];
-                }
-            },
-            methods: {
-                calculateResults() {
-                    this.showResults = true;
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                },
-                reset() {
-                    this.answers = {};
-                    this.showResults = false;
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                }
+        const questions = [
+            { id: 1, text: "I found it hard to wind down", scale: "s" },
+            { id: 2, text: "I was aware of dryness of my mouth", scale: "a" },
+            { id: 3, text: "I couldn't seem to experience any positive feeling at all", scale: "d" },
+            { id: 4, text: "I experienced breathing difficulty", scale: "a" },
+            { id: 5, text: "I found it difficult to work up the initiative to do things", scale: "d" },
+            { id: 6, text: "I tended to over-react to situations", scale: "s" },
+            { id: 7, text: "I experienced trembling (e.g., in the hands)", scale: "s" },
+            { id: 8, text: "I felt that I was using a lot of nervous energy", scale: "a" },
+            { id: 9, text: "I was worried about situations in which I might panic and make a fool of myself", scale: "s" },
+            { id: 10, text: "I felt that I had nothing to look forward to", scale: "d" },
+            { id: 11, text: "I found myself getting agitated", scale: "a" },
+            { id: 12, text: "I found it difficult to relax", scale: "s" },
+            { id: 13, text: "I felt down-hearted and blue", scale: "d" },
+            { id: 14, text: "I was intolerant of anything that kept me from getting on with what I was doing", scale: "s" },
+            { id: 15, text: "I felt I was close to panic", scale: "a" },
+            { id: 16, text: "I was unable to become enthusiastic about anything", scale: "d" },
+            { id: 17, text: "I felt I wasn't worth much as a person", scale: "d" },
+            { id: 18, text: "I felt that I was rather touchy", scale: "d" },
+            { id: 19, text: "I was aware of the action of my heart in the absence of physical exertion", scale: "a" },
+            { id: 20, text: "I felt scared without any good reason", scale: "a" },
+            { id: 21, text: "I felt that life was meaningless", scale: "d" }
+        ];
+
+        const options = [
+            { value: 0, label: "0 — Did not apply to me at all" },
+            { value: 1, label: "1 — Applied to me to some degree" },
+            { value: 2, label: "2 — Applied to me to a considerable degree" },
+            { value: 3, label: "3 — Applied to me very much" }
+        ];
+
+        const answers = {};
+
+        function renderQuestions() {
+            const area = document.getElementById('questions-area');
+            area.innerHTML = '';
+            questions.forEach((q, idx) => {
+                const block = document.createElement('div');
+                block.className = 'question-block';
+                block.innerHTML = `<p>${idx + 1}. ${q.text}</p>` +
+                    options.map(opt => `
+                        <div class="option" onclick="selectOption(${q.id}, ${opt.value}, this)">
+                            <input type="radio" name="q${q.id}" value="${opt.value}" id="q${q.id}_${opt.value}">
+                            <label for="q${q.id}_${opt.value}">${opt.label}</label>
+                        </div>
+                    `).join('');
+                area.appendChild(block);
+            });
+        }
+
+        function selectOption(qid, val, rowEl) {
+            answers[qid] = val;
+            const block = rowEl.closest('.question-block');
+            block.querySelectorAll('.option').forEach(r => r.classList.remove('selected'));
+            rowEl.classList.add('selected');
+            block.querySelector(`input[value="${val}"]`).checked = true;
+            updateProgress();
+        }
+
+        function updateProgress() {
+            const count = Object.keys(answers).length;
+            const pct = (count / questions.length) * 100;
+            document.getElementById('progress-fill').style.width = pct + '%';
+            document.getElementById('progress-text').textContent = count + ' / ' + questions.length;
+            document.getElementById('submit-btn').disabled = count !== questions.length;
+        }
+
+        function getLevel(score, type) {
+            if (type === 'd') {
+                if (score <= 9) return ['Normal', 'green'];
+                if (score <= 13) return ['Mild', 'green'];
+                if (score <= 20) return ['Moderate', 'yellow'];
+                if (score <= 27) return ['Severe', 'red'];
+                return ['Extremely Severe', 'red'];
             }
-        }).mount('#app');
+            if (type === 'a') {
+                if (score <= 7) return ['Normal', 'green'];
+                if (score <= 9) return ['Mild', 'green'];
+                if (score <= 14) return ['Moderate', 'yellow'];
+                if (score <= 19) return ['Severe', 'red'];
+                return ['Extremely Severe', 'red'];
+            }
+            if (type === 's') {
+                if (score <= 14) return ['Normal', 'green'];
+                if (score <= 18) return ['Mild', 'green'];
+                if (score <= 25) return ['Moderate', 'yellow'];
+                if (score <= 33) return ['Severe', 'red'];
+                return ['Extremely Severe', 'red'];
+            }
+        }
+
+        function getDesc(level, type) {
+            const maps = {
+                d: {
+                    'Normal': 'Your emotional state is within normal limits. Negative emotions are minimal.',
+                    'Mild': 'Minor signs of depressive experiences. Monitoring is recommended.',
+                    'Moderate': 'Noticeable depressive symptoms. Consultation with a specialist is recommended.',
+                    'Severe': 'Serious depressive manifestations. Professional help is necessary.',
+                    'Extremely Severe': 'Extremely severe depression. Seek a psychotherapist or psychiatrist urgently.'
+                },
+                a: {
+                    'Normal': 'Anxiety is within normal limits.',
+                    'Mild': 'Minor anxiety. Relaxation techniques may be helpful.',
+                    'Moderate': 'Noticeable anxiety. Consultation with a specialist is recommended.',
+                    'Severe': 'Serious anxiety. Professional help is necessary.',
+                    'Extremely Severe': 'Extremely severe anxiety. Seek a specialist urgently.'
+                },
+                s: {
+                    'Normal': 'Stress level is within normal limits.',
+                    'Mild': 'Minor stress. Rest and physical activity are recommended.',
+                    'Moderate': 'Noticeable stress. Review of lifestyle and workload is important.',
+                    'Severe': 'Serious stress. Consultation with a specialist is recommended.',
+                    'Extremely Severe': 'Critical stress level. Seek help urgently.'
+                }
+            };
+            return maps[type][level];
+        }
+
+        function calculateResults() {
+            let d = 0, a = 0, s = 0;
+            questions.forEach(q => {
+                const v = answers[q.id] || 0;
+                if (q.scale === 'd') d += v;
+                if (q.scale === 'a') a += v;
+                if (q.scale === 's') s += v;
+            });
+            const ds = d * 2, as = a * 2, ss = s * 2;
+
+            const [dl, dc] = getLevel(ds, 'd');
+            const [al, ac] = getLevel(as, 'a');
+            const [sl, sc] = getLevel(ss, 's');
+
+            document.getElementById('d-score').textContent = ds;
+            document.getElementById('a-score').textContent = as;
+            document.getElementById('s-score').textContent = ss;
+
+            document.getElementById('d-level').textContent = dl;
+            document.getElementById('a-level').textContent = al;
+            document.getElementById('s-level').textContent = sl;
+
+            document.getElementById('d-desc').textContent = getDesc(dl, 'd');
+            document.getElementById('a-desc').textContent = getDesc(al, 'a');
+            document.getElementById('s-desc').textContent = getDesc(sl, 's');
+
+            const db = document.getElementById('d-bar');
+            db.className = 'level-fill ' + dc;
+            db.style.width = Math.min(ds / 42 * 100, 100) + '%';
+
+            const ab = document.getElementById('a-bar');
+            ab.className = 'level-fill ' + ac;
+            ab.style.width = Math.min(as / 42 * 100, 100) + '%';
+
+            const sb = document.getElementById('s-bar');
+            sb.className = 'level-fill ' + sc;
+            sb.style.width = Math.min(ss / 42 * 100, 100) + '%';
+
+            const dch = document.getElementById('d-chart');
+            dch.className = 'chart-bar ' + dc;
+            dch.style.height = Math.max(ds / 42 * 160, 4) + 'px';
+
+            const ach = document.getElementById('a-chart');
+            ach.className = 'chart-bar ' + ac;
+            ach.style.height = Math.max(as / 42 * 160, 4) + 'px';
+
+            const sch = document.getElementById('s-chart');
+            sch.className = 'chart-bar ' + sc;
+            sch.style.height = Math.max(ss / 42 * 160, 4) + 'px';
+
+            document.getElementById('quiz-section').classList.add('hidden');
+            document.getElementById('sidebar').classList.add('hidden');
+            document.getElementById('progress-bar').classList.add('hidden');
+            document.getElementById('results-section').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function resetQuiz() {
+            for (let k in answers) delete answers[k];
+            renderQuestions();
+            updateProgress();
+            document.getElementById('quiz-section').classList.remove('hidden');
+            document.getElementById('sidebar').classList.remove('hidden');
+            document.getElementById('progress-bar').classList.remove('hidden');
+            document.getElementById('results-section').classList.add('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        renderQuestions();
     </script>
 </body>
 </html>
