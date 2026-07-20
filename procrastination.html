@@ -93,9 +93,13 @@
             border: 2px solid black;
             border-radius: 10px;
             cursor: pointer;
+            transition: background 0.1s;
         }
         .option:hover {
             background: rgba(255,255,255,0.7);
+        }
+        .option.selected {
+            background: #90ccf7;
         }
         .option input {
             width: 18px;
@@ -180,6 +184,7 @@
             font-size: 1.5rem;
             font-weight: bold;
         }
+        .hidden { display: none !important; }
         @media (max-width: 480px) {
             .header h1 { font-size: 1rem; }
             .score-number { font-size: 2.2rem; }
@@ -187,163 +192,174 @@
     </style>
 </head>
 <body>
-    <div id="app" class="container">
+    <div class="container">
         <div class="header">
             <h1>Irrational Procrastination Scale</h1>
             <a href="index.html">← Home</a>
         </div>
 
-        <div class="progress-bar" v-if="!showResults">
-            <div class="progress-fill" :style="{width: progressPercent + '%'}"></div>
-            <div class="progress-text">{{ answeredCount }} / {{ questions.length }}</div>
+        <div class="progress-bar" id="progress-bar">
+            <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+            <div class="progress-text" id="progress-text">0 / 20</div>
         </div>
 
-        <div v-if="!showResults">
-            <div class="question-block" v-for="(q, idx) in questions" :key="q.id">
-                <p>{{ idx + 1 }}. {{ q.text }}</p>
-                <div class="options">
-                    <div class="option" v-for="opt in options" :key="opt.value">
-                        <input type="radio" :name="'q'+q.id" :id="'q'+q.id+'_'+opt.value" 
-                               :value="opt.value" v-model="answers[q.id]">
-                        <label :for="'q'+q.id+'_'+opt.value">{{ opt.label }}</label>
+        <div id="quiz-section">
+            <div id="questions-area"></div>
+            <button class="btn" id="submit-btn" disabled onclick="calculateResults()">Get Results</button>
+        </div>
+
+        <div id="results-section" class="hidden">
+            <div class="results">
+                <h2>Test Results</h2>
+                <div class="score-display">
+                    <div>Total Score</div>
+                    <div class="score-number" id="total-score">0</div>
+                    <div class="score-level" id="score-level">Low procrastination level</div>
+                    <div class="score-desc" id="score-desc"></div>
+                </div>
+                <div class="subscales">
+                    <div class="subscale">
+                        <h4>Irrational Expectations</h4>
+                        <div class="val" id="e-score">0</div>
+                    </div>
+                    <div class="subscale">
+                        <h4>Low Self-Esteem</h4>
+                        <div class="val" id="s-score">0</div>
+                    </div>
+                    <div class="subscale">
+                        <h4>Impatience</h4>
+                        <div class="val" id="i-score">0</div>
                     </div>
                 </div>
+                <button class="btn" onclick="resetQuiz()" style="margin-top: 20px;">Retake Test</button>
             </div>
-            <button class="btn" @click="calculateResults" :disabled="!allAnswered">
-                Get Results
-            </button>
-        </div>
-
-        <div v-else class="results">
-            <h2>Test Results</h2>
-            <div class="score-display">
-                <div>Total Score</div>
-                <div class="score-number">{{ totalScore }}</div>
-                <div class="score-level" :style="{color: levelColor}">{{ level }}</div>
-                <div class="score-desc">{{ levelDescription }}</div>
-            </div>
-            <div class="subscales">
-                <div class="subscale">
-                    <h4>Irrational Expectations</h4>
-                    <div class="val">{{ expectationsScore }}</div>
-                </div>
-                <div class="subscale">
-                    <h4>Low Self-Esteem</h4>
-                    <div class="val">{{ selfEsteemScore }}</div>
-                </div>
-                <div class="subscale">
-                    <h4>Impatience</h4>
-                    <div class="val">{{ impatienceScore }}</div>
-                </div>
-            </div>
-            <button class="btn" @click="reset" style="margin-top: 20px;">Retake Test</button>
         </div>
     </div>
 
-    <script src="vue_global.js"></script>
     <script>
-        Vue.createApp({
-            data() {
-                return {
-                    answers: {},
-                    showResults: false,
-                    options: [
-                        { value: 1, label: '1 — Strongly disagree' },
-                        { value: 2, label: '2 — Disagree' },
-                        { value: 3, label: '3 — Slightly disagree' },
-                        { value: 4, label: '4 — Neutral' },
-                        { value: 5, label: '5 — Slightly agree' },
-                        { value: 6, label: '6 — Agree' },
-                        { value: 7, label: '7 — Strongly agree' }
-                    ],
-                    questions: [
-                        { id: 1, text: 'I put things off because I fear I won't do them perfectly', scale: 'e' },
-                        { id: 2, text: 'I feel incompetent when I think about unfinished tasks', scale: 's' },
-                        { id: 3, text: 'I find it hard to start tasks that require sustained effort', scale: 'i' },
-                        { id: 4, text: 'I put things off because I fear criticism from others', scale: 'e' },
-                        { id: 5, text: 'I feel like a failure when I postpone important tasks', scale: 's' },
-                        { id: 6, text: 'I want to get results immediately, without effort', scale: 'i' },
-                        { id: 7, text: 'I put things off because I believe I should do them effortlessly', scale: 'e' },
-                        { id: 8, text: 'My self-esteem drops when I procrastinate', scale: 's' },
-                        { id: 9, text: 'I find it hard to tolerate discomfort for a future reward', scale: 'i' },
-                        { id: 10, text: 'I put things off because I fear the result won't meet expectations', scale: 'e' },
-                        { id: 11, text: 'I feel like I'm not good enough compared to others', scale: 's' },
-                        { id: 12, text: 'I prefer a pleasant activity now over a difficult task', scale: 'i' },
-                        { id: 13, text: 'I put things off because I believe conditions must be perfect', scale: 'e' },
-                        { id: 14, text: 'I criticize myself for procrastinating', scale: 's' },
-                        { id: 15, text: 'I find it hard to focus on long-term goals', scale: 'i' },
-                        { id: 16, text: 'I put things off because I fear the unknown', scale: 'e' },
-                        { id: 17, text: 'I feel ashamed when I miss a deadline', scale: 's' },
-                        { id: 18, text: 'I prefer immediate pleasure over a delayed reward', scale: 'i' },
-                        { id: 19, text: 'I put things off because I believe I should do everything myself', scale: 'e' },
-                        { id: 20, text: 'I feel helpless in the face of difficult tasks', scale: 's' }
-                    ]
-                };
-            },
-            computed: {
-                answeredCount() {
-                    return Object.keys(this.answers).length;
-                },
-                progressPercent() {
-                    return (this.answeredCount / this.questions.length) * 100;
-                },
-                allAnswered() {
-                    return this.answeredCount === this.questions.length;
-                },
-                totalScore() {
-                    return this.questions.reduce((sum, q) => sum + (this.answers[q.id] || 0), 0);
-                },
-                expectationsScore() {
-                    return this.questions
-                        .filter(q => q.scale === 'e')
-                        .reduce((sum, q) => sum + (this.answers[q.id] || 0), 0);
-                },
-                selfEsteemScore() {
-                    return this.questions
-                        .filter(q => q.scale === 's')
-                        .reduce((sum, q) => sum + (this.answers[q.id] || 0), 0);
-                },
-                impatienceScore() {
-                    return this.questions
-                        .filter(q => q.scale === 'i')
-                        .reduce((sum, q) => sum + (this.answers[q.id] || 0), 0);
-                },
-                level() {
-                    const s = this.totalScore;
-                    if (s <= 40) return 'Low procrastination level';
-                    if (s <= 80) return 'Moderate procrastination level';
-                    if (s <= 120) return 'High procrastination level';
-                    return 'Very high procrastination level';
-                },
-                levelColor() {
-                    const s = this.totalScore;
-                    if (s <= 40) return '#2d7d32';
-                    if (s <= 80) return '#f5a623';
-                    if (s <= 120) return '#e65100';
-                    return '#d0021b';
-                },
-                levelDescription() {
-                    const descs = {
-                        'Low procrastination level': 'You handle tasks effectively. Procrastination is not a problem. Maintain your current time management strategies.',
-                        'Moderate procrastination level': 'Procrastination is present but manageable. Consider working on planning, breaking tasks into parts, and using the Pomodoro technique.',
-                        'High procrastination level': 'Procrastination significantly interferes with your life. Cognitive-behavioral therapy and addressing irrational beliefs are recommended.',
-                        'Very high procrastination level': 'Procrastination seriously impairs functioning. Strongly recommended to consult a therapist.'
-                    };
-                    return descs[this.level];
-                }
-            },
-            methods: {
-                calculateResults() {
-                    this.showResults = true;
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                },
-                reset() {
-                    this.answers = {};
-                    this.showResults = false;
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                }
+        const questions = [
+            { id: 1, text: "I put things off because I fear I won't do them perfectly", scale: "e" },
+            { id: 2, text: "I feel incompetent when I think about unfinished tasks", scale: "s" },
+            { id: 3, text: "I find it hard to start tasks that require sustained effort", scale: "i" },
+            { id: 4, text: "I put things off because I fear criticism from others", scale: "e" },
+            { id: 5, text: "I feel like a failure when I postpone important tasks", scale: "s" },
+            { id: 6, text: "I want to get results immediately, without effort", scale: "i" },
+            { id: 7, text: "I put things off because I believe I should do them effortlessly", scale: "e" },
+            { id: 8, text: "My self-esteem drops when I procrastinate", scale: "s" },
+            { id: 9, text: "I find it hard to tolerate discomfort for a future reward", scale: "i" },
+            { id: 10, text: "I put things off because I fear the result won't meet expectations", scale: "e" },
+            { id: 11, text: "I feel like I'm not good enough compared to others", scale: "s" },
+            { id: 12, text: "I prefer a pleasant activity now over a difficult task", scale: "i" },
+            { id: 13, text: "I put things off because I believe conditions must be perfect", scale: "e" },
+            { id: 14, text: "I criticize myself for procrastinating", scale: "s" },
+            { id: 15, text: "I find it hard to focus on long-term goals", scale: "i" },
+            { id: 16, text: "I put things off because I fear the unknown", scale: "e" },
+            { id: 17, text: "I feel ashamed when I miss a deadline", scale: "s" },
+            { id: 18, text: "I prefer immediate pleasure over a delayed reward", scale: "i" },
+            { id: 19, text: "I put things off because I believe I should do everything myself", scale: "e" },
+            { id: 20, text: "I feel helpless in the face of difficult tasks", scale: "s" }
+        ];
+
+        const options = [
+            { value: 1, label: "1 — Strongly disagree" },
+            { value: 2, label: "2 — Disagree" },
+            { value: 3, label: "3 — Slightly disagree" },
+            { value: 4, label: "4 — Neutral" },
+            { value: 5, label: "5 — Slightly agree" },
+            { value: 6, label: "6 — Agree" },
+            { value: 7, label: "7 — Strongly agree" }
+        ];
+
+        const answers = {};
+
+        function renderQuestions() {
+            const area = document.getElementById('questions-area');
+            area.innerHTML = '';
+            questions.forEach((q, idx) => {
+                const block = document.createElement('div');
+                block.className = 'question-block';
+                block.innerHTML = `<p>${idx + 1}. ${q.text}</p>` +
+                    options.map(opt => `
+                        <div class="option" onclick="selectOption(${q.id}, ${opt.value}, this)">
+                            <input type="radio" name="q${q.id}" value="${opt.value}" id="q${q.id}_${opt.value}">
+                            <label for="q${q.id}_${opt.value}">${opt.label}</label>
+                        </div>
+                    `).join('');
+                area.appendChild(block);
+            });
+        }
+
+        function selectOption(qid, val, rowEl) {
+            answers[qid] = val;
+            const block = rowEl.closest('.question-block');
+            block.querySelectorAll('.option').forEach(r => r.classList.remove('selected'));
+            rowEl.classList.add('selected');
+            block.querySelector(`input[value="${val}"]`).checked = true;
+            updateProgress();
+        }
+
+        function updateProgress() {
+            const count = Object.keys(answers).length;
+            const pct = (count / questions.length) * 100;
+            document.getElementById('progress-fill').style.width = pct + '%';
+            document.getElementById('progress-text').textContent = count + ' / ' + questions.length;
+            document.getElementById('submit-btn').disabled = count !== questions.length;
+        }
+
+        function calculateResults() {
+            let total = 0, e = 0, s = 0, i = 0;
+            questions.forEach(q => {
+                const v = answers[q.id] || 0;
+                total += v;
+                if (q.scale === 'e') e += v;
+                if (q.scale === 's') s += v;
+                if (q.scale === 'i') i += v;
+            });
+
+            let level, color, desc;
+            if (total <= 40) {
+                level = 'Low procrastination level';
+                color = '#2d7d32';
+                desc = 'You handle tasks effectively. Procrastination is not a problem. Maintain your current time management strategies.';
+            } else if (total <= 80) {
+                level = 'Moderate procrastination level';
+                color = '#f5a623';
+                desc = 'Procrastination is present but manageable. Consider working on planning, breaking tasks into parts, and using the Pomodoro technique.';
+            } else if (total <= 120) {
+                level = 'High procrastination level';
+                color = '#e65100';
+                desc = 'Procrastination significantly interferes with your life. Cognitive-behavioral therapy and addressing irrational beliefs are recommended.';
+            } else {
+                level = 'Very high procrastination level';
+                color = '#d0021b';
+                desc = 'Procrastination seriously impairs functioning. Strongly recommended to consult a therapist.';
             }
-        }).mount('#app');
+
+            document.getElementById('total-score').textContent = total;
+            document.getElementById('score-level').textContent = level;
+            document.getElementById('score-level').style.color = color;
+            document.getElementById('score-desc').textContent = desc;
+            document.getElementById('e-score').textContent = e;
+            document.getElementById('s-score').textContent = s;
+            document.getElementById('i-score').textContent = i;
+
+            document.getElementById('quiz-section').classList.add('hidden');
+            document.getElementById('progress-bar').classList.add('hidden');
+            document.getElementById('results-section').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function resetQuiz() {
+            for (let k in answers) delete answers[k];
+            renderQuestions();
+            updateProgress();
+            document.getElementById('quiz-section').classList.remove('hidden');
+            document.getElementById('progress-bar').classList.remove('hidden');
+            document.getElementById('results-section').classList.add('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        renderQuestions();
     </script>
 </body>
 </html>
