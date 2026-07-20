@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
-    <title>Уровень прокрастинации</title>
+    <title>Procrastination Level</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <style>
@@ -189,8 +189,8 @@
 <body>
     <div id="app" class="container">
         <div class="header">
-            <h1>Шкала иррациональной прокрастинации</h1>
-            <a href="index.html">← На главную</a>
+            <h1>Irrational Procrastination Scale</h1>
+            <a href="index.html">← Home</a>
         </div>
 
         <div class="progress-bar" v-if="!showResults">
@@ -210,33 +210,33 @@
                 </div>
             </div>
             <button class="btn" @click="calculateResults" :disabled="!allAnswered">
-                Получить результаты
+                Get Results
             </button>
         </div>
 
         <div v-else class="results">
-            <h2>Результаты тестирования</h2>
+            <h2>Test Results</h2>
             <div class="score-display">
-                <div>Общий балл</div>
+                <div>Total Score</div>
                 <div class="score-number">{{ totalScore }}</div>
                 <div class="score-level" :style="{color: levelColor}">{{ level }}</div>
                 <div class="score-desc">{{ levelDescription }}</div>
             </div>
             <div class="subscales">
                 <div class="subscale">
-                    <h4>Иррациональные ожидания</h4>
+                    <h4>Irrational Expectations</h4>
                     <div class="val">{{ expectationsScore }}</div>
                 </div>
                 <div class="subscale">
-                    <h4>Низкая самооценка</h4>
+                    <h4>Low Self-Esteem</h4>
                     <div class="val">{{ selfEsteemScore }}</div>
                 </div>
                 <div class="subscale">
-                    <h4>Нетерпеливость</h4>
+                    <h4>Impatience</h4>
                     <div class="val">{{ impatienceScore }}</div>
                 </div>
             </div>
-            <button class="btn" @click="reset" style="margin-top: 20px;">Пройти заново</button>
+            <button class="btn" @click="reset" style="margin-top: 20px;">Retake Test</button>
         </div>
     </div>
 
@@ -248,35 +248,35 @@
                     answers: {},
                     showResults: false,
                     options: [
-                        { value: 1, label: '1 — Совершенно неверно' },
-                        { value: 2, label: '2 — В основном неверно' },
-                        { value: 3, label: '3 — Скорее неверно, чем верно' },
-                        { value: 4, label: '4 — Ни то, ни другое' },
-                        { value: 5, label: '5 — Скорее верно, чем неверно' },
-                        { value: 6, label: '6 — В основном верно' },
-                        { value: 7, label: '7 — Совершенно верно' }
+                        { value: 1, label: '1 — Strongly disagree' },
+                        { value: 2, label: '2 — Disagree' },
+                        { value: 3, label: '3 — Slightly disagree' },
+                        { value: 4, label: '4 — Neutral' },
+                        { value: 5, label: '5 — Slightly agree' },
+                        { value: 6, label: '6 — Agree' },
+                        { value: 7, label: '7 — Strongly agree' }
                     ],
                     questions: [
-                        { id: 1, text: 'Я откладываю дела, потому что боюсь, что не справлюсь идеально', scale: 'e' },
-                        { id: 2, text: 'Я чувствую себя некомпетентным, когда думаю о невыполненных задачах', scale: 's' },
-                        { id: 3, text: 'Мне трудно начинать дела, требующие длительных усилий', scale: 'i' },
-                        { id: 4, text: 'Я откладываю дела, потому что боюсь критики других', scale: 'e' },
-                        { id: 5, text: 'Я чувствую себя неудачником, когда откладываю важные дела', scale: 's' },
-                        { id: 6, text: 'Я хочу получить результат немедленно, без усилий', scale: 'i' },
-                        { id: 7, text: 'Я откладываю дела, потому что считаю, что должен делать их без труда', scale: 'e' },
-                        { id: 8, text: 'Моя самооценка падает, когда я procrastинирую', scale: 's' },
-                        { id: 9, text: 'Мне трудно терпеть дискомфорт ради будущего результата', scale: 'i' },
-                        { id: 10, text: 'Я откладываю дела, потому что боюсь, что результат не оправдает ожиданий', scale: 'e' },
-                        { id: 11, text: 'Я чувствую себя недостаточно хорошим по сравнению с другими', scale: 's' },
-                        { id: 12, text: 'Я предпочитаю приятное занятие сейчас трудной задаче', scale: 'i' },
-                        { id: 13, text: 'Я откладываю дела, потому что считаю, что условия должны быть идеальными', scale: 'e' },
-                        { id: 14, text: 'Я критикую себя за прокрастинацию', scale: 's' },
-                        { id: 15, text: 'Мне трудно концентрироваться на долгосрочных целях', scale: 'i' },
-                        { id: 16, text: 'Я откладываю дела, потому что боюсь неизвестности', scale: 'e' },
-                        { id: 17, text: 'Я чувствую стыд, когда не успеваю в срок', scale: 's' },
-                        { id: 18, text: 'Я предпочитаю немедленное удовольствие отложенной награде', scale: 'i' },
-                        { id: 19, text: 'Я откладываю дела, потому что считаю, что должен делать всё сам', scale: 'e' },
-                        { id: 20, text: 'Я чувствую себя беспомощным перед лицом сложных задач', scale: 's' }
+                        { id: 1, text: 'I put things off because I fear I won't do them perfectly', scale: 'e' },
+                        { id: 2, text: 'I feel incompetent when I think about unfinished tasks', scale: 's' },
+                        { id: 3, text: 'I find it hard to start tasks that require sustained effort', scale: 'i' },
+                        { id: 4, text: 'I put things off because I fear criticism from others', scale: 'e' },
+                        { id: 5, text: 'I feel like a failure when I postpone important tasks', scale: 's' },
+                        { id: 6, text: 'I want to get results immediately, without effort', scale: 'i' },
+                        { id: 7, text: 'I put things off because I believe I should do them effortlessly', scale: 'e' },
+                        { id: 8, text: 'My self-esteem drops when I procrastinate', scale: 's' },
+                        { id: 9, text: 'I find it hard to tolerate discomfort for a future reward', scale: 'i' },
+                        { id: 10, text: 'I put things off because I fear the result won't meet expectations', scale: 'e' },
+                        { id: 11, text: 'I feel like I'm not good enough compared to others', scale: 's' },
+                        { id: 12, text: 'I prefer a pleasant activity now over a difficult task', scale: 'i' },
+                        { id: 13, text: 'I put things off because I believe conditions must be perfect', scale: 'e' },
+                        { id: 14, text: 'I criticize myself for procrastinating', scale: 's' },
+                        { id: 15, text: 'I find it hard to focus on long-term goals', scale: 'i' },
+                        { id: 16, text: 'I put things off because I fear the unknown', scale: 'e' },
+                        { id: 17, text: 'I feel ashamed when I miss a deadline', scale: 's' },
+                        { id: 18, text: 'I prefer immediate pleasure over a delayed reward', scale: 'i' },
+                        { id: 19, text: 'I put things off because I believe I should do everything myself', scale: 'e' },
+                        { id: 20, text: 'I feel helpless in the face of difficult tasks', scale: 's' }
                     ]
                 };
             },
@@ -310,10 +310,10 @@
                 },
                 level() {
                     const s = this.totalScore;
-                    if (s <= 40) return 'Низкий уровень прокрастинации';
-                    if (s <= 80) return 'Умеренный уровень прокрастинации';
-                    if (s <= 120) return 'Высокий уровень прокрастинации';
-                    return 'Очень высокий уровень прокрастинации';
+                    if (s <= 40) return 'Low procrastination level';
+                    if (s <= 80) return 'Moderate procrastination level';
+                    if (s <= 120) return 'High procrastination level';
+                    return 'Very high procrastination level';
                 },
                 levelColor() {
                     const s = this.totalScore;
@@ -324,10 +324,10 @@
                 },
                 levelDescription() {
                     const descs = {
-                        'Низкий уровень прокрастинации': 'Вы эффективно справляетесь с задачами. Прокрастинация не является проблемой. Рекомендуется поддерживать текущие стратегии тайм-менеджмента.',
-                        'Умеренный уровень прокрастинации': 'Прокрастинация присутствует, но контролируется. Рекомендуется работа с планированием, разбиение задач на части, техники помодоро.',
-                        'Высокий уровень прокрастинации': 'Прокрастинация значительно мешает жизни. Рекомендуется когнитивно-поведенческая терапия, работа с иррациональными убеждениями.',
-                        'Очень высокий уровень прокрастинации': 'Прокрастинация серьёзно нарушает функционирование. Настоятельно рекомендуется обращение к психотерапевту.'
+                        'Low procrastination level': 'You handle tasks effectively. Procrastination is not a problem. Maintain your current time management strategies.',
+                        'Moderate procrastination level': 'Procrastination is present but manageable. Consider working on planning, breaking tasks into parts, and using the Pomodoro technique.',
+                        'High procrastination level': 'Procrastination significantly interferes with your life. Cognitive-behavioral therapy and addressing irrational beliefs are recommended.',
+                        'Very high procrastination level': 'Procrastination seriously impairs functioning. Strongly recommended to consult a therapist.'
                     };
                     return descs[this.level];
                 }
